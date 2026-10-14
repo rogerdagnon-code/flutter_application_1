@@ -1,11 +1,10 @@
-import 'package:english_words/english_words.dart';
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
-}
+} //inicialização e estrutura principal
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -18,26 +17,25 @@ class MyApp extends StatelessWidget {
         title: 'Namer App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),    
         ),
         home: MyHomePage(),
       ),
     );
   }
-}
+} //configurações padroes do app
 
 //Logica de negocios
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
+  var current = PalavraPair.random(); //armazena a palavra aleatoria atual
+  var favorites = <PalavraPair> []; // lista de amazena as palavras quando favoritadas
 
-  void getNext(){
-    current = WordPair.random();
+  void getNext(){ // gera uma nova palavra aleatoria
+    current = PalavraPair.random();
     notifyListeners();
   }
 
-  var favorites = <WordPair> [];
-
-  void toggleFavorite() {
+  void toggleFavorite() { // adiciona a palavra atual aos favoritos
     if (favorites.contains(current)){
       favorites.remove(current);
     } else {
@@ -47,15 +45,13 @@ class MyAppState extends ChangeNotifier {
   }
 }
 
-// ...
-
+// Tela principal e navegação - StatefulWidget guarda o estado local de qual aba está selecionada
 class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   var selectedIndex = 0;
 
   @override
@@ -69,25 +65,25 @@ class _MyHomePageState extends State<MyHomePage> {
       page = FavoritesPage();
       break;
     default:
-      throw UnimplementedError('no widget for $selectedIndex');
+      throw UnimplementedError('Nenhum widget para o índice $selectedIndex');
   }
     
-    return LayoutBuilder(
-      builder: (context, Constraints) {
+    return LayoutBuilder( //analisa o espaço disponivel na tela, 
+      builder: (context, constraints) {
         return Scaffold(
-          body: Row(
+          body: Row( //divide as duas colunas
             children: [
               SafeArea(
-                child: NavigationRail(
-                  extended: Constraints.maxHeight >= 600,
+                child: NavigationRail( //se a altura for maior ou igual a 600p, o menu lateral se expande automaticamente, caso contrario mostra somente os icones
+                  extended: constraints.maxHeight >= 600,
                   destinations: [
                     NavigationRailDestination(
                       icon: Icon(Icons.home),
-                      label: Text('Home'),
+                      label: Text('Início'),
                     ),
                     NavigationRailDestination(
                       icon: Icon(Icons.favorite),
-                      label: Text('Favorites'),
+                      label: Text('Favoritos'),
                     ),
                   ],
                   selectedIndex: selectedIndex,
@@ -113,7 +109,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+// Pag do gerador - exibe o bigcard e os 2 botoes
 class GeneratorPage extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -140,14 +138,14 @@ class GeneratorPage extends StatelessWidget {
                   appState.toggleFavorite();
                 },
                 icon: Icon(icon),
-                label: Text('Like'),
+                label: Text('Gostei'),
               ),
               SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () {
                   appState.getNext();
                 },
-                child: Text('Next'),
+                child: Text('Próximo'),
               ),
             ],
           ),
@@ -157,16 +155,14 @@ class GeneratorPage extends StatelessWidget {
   }
 }
 
-// ...
-
-
+// Cartao personalizado
 class BigCard extends StatelessWidget {
   const BigCard({
     super.key,
     required this.pair,
   });
 
-  final WordPair pair;
+  final PalavraPair pair;
 
   @override
   Widget build(BuildContext context) {
@@ -182,14 +178,14 @@ class BigCard extends StatelessWidget {
         child: Text(
           pair.asLowerCase,
           style: style,
-          semanticsLabel: "${pair.first} ${pair.second}",
+          semanticsLabel: "${pair.primeira} ${pair.segunda}",
           ),
       ),
     );
   }
 }
 
-
+//Pag de favoritos - verifica a lista se vazia, mostra um mensagem, se ouver itens retorna o listview gerando um listTile
 class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -197,7 +193,7 @@ class FavoritesPage extends StatelessWidget {
 
     if (appState.favorites.isEmpty) {
       return Center(
-        child: Text('No favorites yet.'),
+        child: Text('Nenhum favorito adicionado.'),
       );
     }
 
@@ -205,8 +201,8 @@ class FavoritesPage extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.all(20),
-          child: Text('You have '
-              '${appState.favorites.length} favorites:'),
+          child: Text('Você tem '
+              '${appState.favorites.length} favoritos:'),
         ),
         for (var pair in appState.favorites)
           ListTile(
@@ -214,6 +210,49 @@ class FavoritesPage extends StatelessWidget {
             title: Text(pair.asLowerCase),
           ),
       ],
+    );
+  }
+}
+
+// --- CLASSE AUXILIAR EM PORTUGUÊS DEFINITIVA (SEM DEPENDER DO FAKER EM INGLÊS) ---
+class PalavraPair {
+  final String primeira;
+  final String segunda;
+
+  PalavraPair(this.primeira, this.segunda);
+
+// ADICIONADO ESPAÇO: Agora adiciona um espaço entre as duas palavras minúsculas
+  String get asLowerCase => '${primeira.toLowerCase()} ${segunda.toLowerCase()}';
+
+  // ADICIONADO ESPAÇO: Também adiciona espaço no formato PascalCase se usar no futuro
+  String get asPascalCase {
+    if (primeira.isEmpty || segunda.isEmpty) return '';
+    final p1 = '${primeira[0].toUpperCase()}${primeira.substring(1)}';
+    final p2 = '${segunda[0].toUpperCase()}${segunda.substring(1)}';
+    return '$p1 $p2';
+  }
+
+  // Gera um par de palavras aleatórias usando um banco de dados nativo em PT-BR
+  static PalavraPair random() {
+    final random = Random();
+    
+    // Lista diversificada de palavras e ideias em português do Brasil
+    final substantivos = [
+      'casa', 'sol', 'lua', 'mar', 'rio', 'vento', 'gato', 'livro', 'cafe', 
+      'fogo', 'terra', 'arte', 'som', 'luz', 'mente', 'vida', 'codigo', 'pao',
+      'tempo', 'jogo', 'app', 'tela', 'nuvem', 'chave', 'porto', 'mastro',
+      'lobo', 'norte', 'sul', 'astro', 'plano', 'ponto', 'foco', 'sal'
+    ];
+    final adjetivos = [
+      'azul', 'verde', 'forte', 'doce', 'novo', 'belo', 'livre', 'sabio', 
+      'raro', 'vivo', 'claro', 'bravo', 'agil', 'zen', 'tech', 'pop', 'bom',
+      'util', 'fiel', 'grato', 'leve', 'quente', 'frio', 'alto', 'lindo',
+      'reais', 'macro', 'micro', 'doce', 'suave', 'pleno', 'veloz', 'caro'
+    ];
+
+    return PalavraPair(
+      substantivos[random.nextInt(substantivos.length)],
+      adjetivos[random.nextInt(adjetivos.length)],
     );
   }
 }
