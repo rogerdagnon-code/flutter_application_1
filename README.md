@@ -1,17 +1,26 @@
 # flutter_application_1
 
-A new Flutter project.
+Um novo projeto Flutter.
 
-## Getting Started
+## Começando
 
-This project is a starting point for a Flutter application.
+Este projeto é um ponto de partida para uma aplicação Flutter.
 
-A few resources to get you started if this is your first Flutter project:
+Alguns recursos para você começar se este for o seu primeiro projeto Flutter:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- [Saiba o Flutter](https://docs.flutter.dev/get-started/learn-flutter)
+- [Escreva seu primeiro aplicativo Flutter](https://docs.flutter.dev/get-stated/codelab)
+- [Recursos de aprendizagem Flutter](https://docs.flutter.dev/reference/learning-resources)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Para obter ajuda para começar o desenvolvimento do Flutter, veja o
+[documentação online](https://docs.flutter.dev/), que oferece tutoriais,
+amostras, orientações sobre desenvolvimento móvel e uma referência completa da API.
+
+
+Realizado 6 commits
+1 Inicio do projeto com 2 botões e geração de palavras automaticas em Inglês
+2 Adicionado Barra Lateral com a seleção de pag.
+3 Adicionado Responsividade
+4 Funcionalidades na aba favoritos
+5 Traduzido o app para o portugues e criado uma lista aleatoria para palavras BR.
+6 Atualizado o Leia-me
